@@ -23,6 +23,22 @@ def _settings(*, supabase: bool = False) -> Settings:
     )
 
 
+def _production_settings(*, supabase: bool = False) -> Settings:
+    return Settings(
+        database_url="postgresql://postgres:postgres@localhost:5432/agent_memory",
+        embedding_model="all-MiniLM-L6-v2",
+        auth_secret_current="test-secret",
+        auth_secret_previous=None,
+        internal_api_keys=("dev-api-key",),
+        log_level="INFO",
+        tool_timeout_seconds=30,
+        app_env="production",
+        codex_project_scope_group_id="project-codex",
+        supabase_url="https://example.supabase.co" if supabase else None,
+        supabase_service_role_key="service-role" if supabase else None,
+    )
+
+
 def test_factory_prefers_supabase_when_credentials_provided() -> None:
     repo = repository_factory.build_memory_repository(_settings(supabase=True))
     assert isinstance(repo, SupabaseMemoryRepository)
@@ -38,3 +54,12 @@ def test_factory_falls_back_to_inmemory_when_postgres_unavailable(monkeypatch) -
     monkeypatch.setattr(PostgresMemoryRepository, "is_available", lambda self: False)
     repo = repository_factory.build_memory_repository(_settings())
     assert isinstance(repo, InMemoryMemoryRepository)
+
+
+def test_factory_requires_supabase_in_production() -> None:
+    try:
+        repository_factory.build_memory_repository(_production_settings(supabase=False))
+    except RuntimeError as exc:
+        assert "supabase configuration is required in production" in str(exc)
+        return
+    raise AssertionError("expected RuntimeError when supabase config is missing in production")

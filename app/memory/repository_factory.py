@@ -11,6 +11,8 @@ from app.memory.supabase_repository import SupabaseMemoryRepository
 def build_memory_repository(settings: Settings) -> MemoryRepository:
     if settings.supabase_url and settings.supabase_service_role_key:
         return SupabaseMemoryRepository(settings.supabase_url, settings.supabase_service_role_key)
+    if settings.app_env == "production":
+        raise RuntimeError("supabase configuration is required in production")
     postgres = PostgresMemoryRepository(settings.database_url)
     if postgres.is_available():
         return postgres
