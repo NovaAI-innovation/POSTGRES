@@ -1,0 +1,54 @@
+[features]
+codex_hooks = true
+
+[[hooks.SessionStart]]
+matcher = "startup|resume|clear"
+
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = 'python "$(git rev-parse --show-toplevel)/.codex/hooks/codex_gateway_hook.py"'
+timeout = 20
+statusMessage = "Gateway hook: session start"
+
+[[hooks.UserPromptSubmit]]
+
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = 'python "$(git rev-parse --show-toplevel)/.codex/hooks/codex_gateway_hook.py"'
+timeout = 20
+statusMessage = "Gateway hook: prompt submit"
+
+[[hooks.PreToolUse]]
+matcher = "^Bash$|^apply_patch$|^Edit$|^Write$"
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = 'python "$(git rev-parse --show-toplevel)/.codex/hooks/codex_gateway_hook.py"'
+timeout = 20
+statusMessage = "Gateway hook: pre tool"
+
+[[hooks.PermissionRequest]]
+matcher = "^Bash$|^apply_patch$|^Edit$|^Write$"
+
+[[hooks.PermissionRequest.hooks]]
+type = "command"
+command = 'python "$(git rev-parse --show-toplevel)/.codex/hooks/codex_gateway_hook.py"'
+timeout = 20
+statusMessage = "Gateway hook: permission request"
+
+[[hooks.PostToolUse]]
+matcher = "^Bash$|^apply_patch$|^Edit$|^Write$"
+
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = 'python "$(git rev-parse --show-toplevel)/.codex/hooks/codex_gateway_hook.py"'
+timeout = 20
+statusMessage = "Gateway hook: post tool"
+
+[[hooks.Stop]]
+
+[[hooks.Stop.hooks]]
+type = "command"
+command = 'python "$(git rev-parse --show-toplevel)/.codex/hooks/codex_gateway_hook.py"'
+timeout = 20
+statusMessage = "Gateway hook: stop"

@@ -12,7 +12,7 @@ from app.auth.middleware import AuthError, AuthMiddleware
 from app.config import Settings
 from app.embeddings.service import EmbeddingService
 from app.eval.harness import EvalHarness, HumanReviewQueue
-from app.groups.service import GroupPermissionStore
+from app.groups.service import GroupPermissionStore, GroupPermissions
 from app.lifecycle.service import BackupManager, LifecycleManager, TenantRetentionPolicy
 from app.memory.context import ContextAssembler, ContextBudgets
 from app.memory.ingestion import MemoryIngestionWorker
@@ -94,6 +94,12 @@ class Application:
         self.backup_manager = BackupManager(pathlib.Path.cwd() / "backups")
         self.lifecycle = LifecycleManager(self.memory, self.backup_manager)
         self.eval_harness = EvalHarness(self, pathlib.Path.cwd() / "eval" / "datasets")
+
+        self.groups.set_permissions(
+            self.settings.codex_project_scope_group_id,
+            "Codex",
+            GroupPermissions(can_read=True, can_write=True, can_admin=False),
+        )
 
         self._register_default_tools()
         self._register_default_agents()

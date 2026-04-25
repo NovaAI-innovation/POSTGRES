@@ -19,7 +19,9 @@ def _load_dotenv(path: str = ".env", override: bool = True) -> None:
             key, value = stripped.split("=", 1)
             key = key.strip()
             value = value.strip().strip('"').strip("'")
-            if key and (override or key not in os.environ):
+            current = os.environ.get(key, "")
+            missing = key not in os.environ or not current.strip()
+            if key and (override or missing):
                 os.environ[key] = value
 
 
@@ -33,6 +35,7 @@ class Settings:
     log_level: str
     tool_timeout_seconds: int
     app_env: str
+    codex_project_scope_group_id: str
     supabase_url: str | None = None
     supabase_service_role_key: str | None = None
 
@@ -42,7 +45,13 @@ class Settings:
 
     @staticmethod
     def from_env() -> "Settings":
-        _load_dotenv(".env", override=True)
+        # Precedence:
+        # 1) explicit process environment
+        # 2) .env
+        # 3) .env.docker as fallback
+        _load_dotenv(".env", override=False)
+        if not (os.getenv("SUPABASE_URL", "").strip() and os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()):
+            _load_dotenv(".env.docker", override=False)
         return Settings(
             database_url=os.getenv(
                 "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/agent_memory"
@@ -56,4 +65,5 @@ class Settings:
             log_level=os.getenv("LOG_LEVEL", "INFO"),
             tool_timeout_seconds=int(os.getenv("TOOL_TIMEOUT_SECONDS", "30")),
             app_env=os.getenv("APP_ENV", "development"),
+            codex_project_scope_group_id=os.getenv("CODEX_PROJECT_SCOPE_GROUP_ID", "project-codex"),
         )

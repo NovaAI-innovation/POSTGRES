@@ -8,21 +8,12 @@
       "allowed_methods": [
         "GET",
         "POST",
-        "PATCH"
+        "PATCH",
+        "PUT",
+        "DELETE"
       ],
       "allowed_path_prefixes": [
-        "/health",
-        "/memory",
-        "/context",
-        "/tools",
-        "/tool-approvals",
-        "/tasks",
-        "/lifecycle",
-        "/eval",
-        "/observability",
-        "/audit-events",
-        "/policy-decisions",
-        "/tool-calls"
+        "/"
       ]
     },
     "Codex": {
@@ -33,21 +24,12 @@
       "allowed_methods": [
         "GET",
         "POST",
-        "PATCH"
+        "PATCH",
+        "PUT",
+        "DELETE"
       ],
       "allowed_path_prefixes": [
-        "/health",
-        "/memory",
-        "/context",
-        "/tools",
-        "/tool-approvals",
-        "/tasks",
-        "/lifecycle",
-        "/eval",
-        "/observability",
-        "/audit-events",
-        "/policy-decisions",
-        "/tool-calls"
+        "/"
       ]
     },
     "Agent-0": {

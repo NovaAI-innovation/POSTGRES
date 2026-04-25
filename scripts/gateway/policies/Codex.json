@@ -1,7 +1,7 @@
 {
   "policy_name": "codex-memory-policy",
   "policy_version": "1.0.0",
-  "default_scope": "isolated",
+  "default_scope": "scoped",
   "default_rule": "message",
   "allow_shared_scope": true,
   "sensitive_patterns": [

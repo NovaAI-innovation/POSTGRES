@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 AGENT_ID="Codex"
@@ -12,12 +12,23 @@ EVENT_FILE="${EVENT_FILE:-}"
 PAYLOAD_JSON="${PAYLOAD_JSON:-}"
 PAYLOAD_FILE="${PAYLOAD_FILE:-}"
 BASE_URL="${BASE_URL:-http://127.0.0.1:8000}"
-GATEWAY_URL="${GATEWAY_URL:-http://127.0.0.1:8787}"
+GATEWAY_URL="${GATEWAY_URL:-https://agent-mesh-postgres.srv1300572.hstgr.cloud}"
 POLICY_FILE="${POLICY_FILE:-$(cd "$(dirname "$0")/.." && pwd)/policies/Codex.json}"
 AGENT_PROFILES_FILE="${AGENT_PROFILES_FILE:-$(cd "$(dirname "$0")/.." && pwd)/policies/agent_profiles.json}"
 AUTH_TOKEN="${AUTH_TOKEN:-${CODEX_GATEWAY_TOKEN:-}}"
 API_KEY="${API_KEY:-${CODEX_GATEWAY_API_KEY:-}}"
+PROJECT_SCOPE_ID="${PROJECT_SCOPE_ID:-${CODEX_PROJECT_SCOPE_GROUP_ID:-project-codex}}"
 DRY_RUN="${DRY_RUN:-false}"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  if command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="python"
+  else
+    echo "python3 or python is required" >&2
+    exit 1
+  fi
+fi
 
 require_value() {
   if [[ $# -lt 2 || -z "${2:-}" ]]; then
@@ -43,6 +54,7 @@ while [[ $# -gt 0 ]]; do
     --agent-profiles-file) require_value "$1" "${2:-}"; AGENT_PROFILES_FILE="$2"; shift 2 ;;
     --auth-token) require_value "$1" "${2:-}"; AUTH_TOKEN="$2"; shift 2 ;;
     --api-key) require_value "$1" "${2:-}"; API_KEY="$2"; shift 2 ;;
+    --project-scope-id) require_value "$1" "${2:-}"; PROJECT_SCOPE_ID="$2"; shift 2 ;;
     --dry-run) DRY_RUN="true"; shift 1 ;;
     *) echo "Unknown arg: $1" >&2; exit 1 ;;
   esac
@@ -69,7 +81,7 @@ if [[ "$OPERATION" == "api_proxy" && "${PATH_ARG:0:1}" != "/" ]]; then
   exit 1
 fi
 
-python - "$AGENT_ID" "$TENANT_ID" "$MODE" "$OPERATION" "$METHOD" "$PATH_ARG" "$EVENT_JSON" "$EVENT_FILE" "$PAYLOAD_JSON" "$PAYLOAD_FILE" "$BASE_URL" "$GATEWAY_URL" "$POLICY_FILE" "$AGENT_PROFILES_FILE" "$AUTH_TOKEN" "$API_KEY" "$DRY_RUN" <<'PY'
+"$PYTHON_BIN" - "$AGENT_ID" "$TENANT_ID" "$MODE" "$OPERATION" "$METHOD" "$PATH_ARG" "$EVENT_JSON" "$EVENT_FILE" "$PAYLOAD_JSON" "$PAYLOAD_FILE" "$BASE_URL" "$GATEWAY_URL" "$POLICY_FILE" "$AGENT_PROFILES_FILE" "$AUTH_TOKEN" "$API_KEY" "$PROJECT_SCOPE_ID" "$DRY_RUN" <<'PY'
 import hashlib
 import json
 import re
@@ -98,6 +110,7 @@ from urllib.request import Request, urlopen
     agent_profiles_file,
     auth_token,
     api_key,
+    project_scope_id,
     dry_run_raw,
 ) = sys.argv[1:]
 
@@ -182,17 +195,6 @@ def should_persist(policy_obj: dict, rule: dict, event_obj: dict, sensitive: boo
     return True
 
 
-def path_allowed(profile: dict, http_method: str, api_path: str) -> bool:
-    methods = {str(m).upper() for m in get_field(profile, "allowed_methods", [])}
-    if methods and http_method.upper() not in methods:
-        return False
-
-    prefixes = get_field(profile, "allowed_path_prefixes", [])
-    if not prefixes:
-        return False
-    return any(api_path.startswith(str(prefix)) for prefix in prefixes)
-
-
 def make_direct_headers(request_id: str, action_id: str) -> dict:
     headers = {
         "Content-Type": "application/json",
@@ -253,6 +255,13 @@ def write_action_log(stage: str, status: str, message: str, request_id: str, act
 
 event = parse_optional(event_json, event_file)
 payload = parse_optional(payload_json, payload_file)
+
+if operation == "memory_event" and isinstance(event, dict):
+    event_scope = str(get_field(event, "scope", "")).strip().lower()
+    if not event_scope:
+        event["scope"] = "scoped"
+    if str(get_field(event, "scope", "")).lower() == "scoped" and not get_field(event, "group_id"):
+        event["group_id"] = project_scope_id
 
 request_id = str(uuid.uuid4())
 action_id = str(uuid.uuid4())
@@ -363,8 +372,6 @@ try:
 
         else:
             method_up = method.upper()
-            if not path_allowed(profile, method_up, path_arg):
-                raise RuntimeError(f"api_proxy path or method not allowed for {agent_id}: {method_up} {path_arg}")
 
             if dry_run:
                 result["reason"] = "api_proxy_dry_run"

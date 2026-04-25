@@ -4,9 +4,9 @@ Single-wrapper gateway model: one full wrapper per agent.
 
 ## Canonical wrappers
 
-- `scripts/gateway/agents/claude.ps1` / `scripts/gateway/agents/claude.sh`
-- `scripts/gateway/agents/codex.ps1` / `scripts/gateway/agents/codex.sh`
-- `scripts/gateway/agents/agent-zero.ps1` / `scripts/gateway/agents/agent-zero.sh`
+- `scripts/gateway/agents/claude.sh`
+- `scripts/gateway/agents/codex.sh`
+- `scripts/gateway/agents/agent-zero.sh`
 
 Each wrapper supports both modes:
 
@@ -34,18 +34,35 @@ At least one per agent:
 - `CODEX_GATEWAY_TOKEN` or `CODEX_GATEWAY_API_KEY`
 - `AGENT0_GATEWAY_TOKEN` or `AGENT0_GATEWAY_API_KEY`
 
+## Codex project scope
+
+- Codex defaults to `scoped` memory writes.
+- Default project group id is `project-codex`.
+- Override via env `CODEX_PROJECT_SCOPE_GROUP_ID` or wrapper arg `--project-scope-id`.
+
 ## Usage examples
 
 Direct memory event (Codex):
 
-```powershell
-.\scripts\gateway\agents\codex.ps1 -Mode direct -Operation memory_event -EventJson '{"event_type":"task_outcome","content":"Migration completed","confidence":0.92,"scope":"isolated"}' -BaseUrl http://127.0.0.1:8000
+```bash
+sh ./scripts/gateway/agents/codex.sh \
+  --mode direct \
+  --operation memory_event \
+  --event-json '{"event_type":"task_outcome","content":"Migration completed","confidence":0.92}' \
+  --project-scope-id "project-codex" \
+  --base-url "http://127.0.0.1:8000"
 ```
 
 Remote API proxy (Claude):
 
-```powershell
-.\scripts\gateway\agents\claude.ps1 -Mode remote -Operation api_proxy -Method POST -Path "/tasks" -PayloadJson '{"summary":"integration task"}' -GatewayUrl "http://your-vps:8787"
+```bash
+sh ./scripts/gateway/agents/claude.sh \
+  --mode remote \
+  --operation api_proxy \
+  --method POST \
+  --path "/tasks" \
+  --payload-json '{"summary":"integration task"}' \
+  --gateway-url "http://your-vps:8787"
 ```
 
 ## `POST /gateway/execute` payload
