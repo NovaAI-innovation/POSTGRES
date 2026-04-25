@@ -2,7 +2,7 @@
   "agents": {
     "Claude": {
       "tenant_id": "Casey",
-      "policy_file": "claude.json",
+      "policy_file": "Claude.json",
       "auth_token_env": "CLAUDE_GATEWAY_TOKEN",
       "api_key_env": "CLAUDE_GATEWAY_API_KEY",
       "allowed_methods": [
@@ -27,9 +27,9 @@
     },
     "Codex": {
       "tenant_id": "Casey",
-      "policy_file": "agent-b.json",
-      "auth_token_env": "AGENT_B_GATEWAY_TOKEN",
-      "api_key_env": "AGENT_B_GATEWAY_API_KEY",
+      "policy_file": "Codex.json",
+      "auth_token_env": "CODEX_GATEWAY_TOKEN",
+      "api_key_env": "CODEX_GATEWAY_API_KEY",
       "allowed_methods": [
         "GET",
         "POST",
@@ -52,9 +52,9 @@
     },
     "Agent-0": {
       "tenant_id": "Casey",
-      "policy_file": "agent-a.json",
-      "auth_token_env": "AGENT_A_GATEWAY_TOKEN",
-      "api_key_env": "AGENT_A_GATEWAY_API_KEY",
+      "policy_file": "Agent-0.json",
+      "auth_token_env": "AGENT0_GATEWAY_TOKEN",
+      "api_key_env": "AGENT0_GATEWAY_API_KEY",
       "allowed_methods": [
         "GET",
         "POST",

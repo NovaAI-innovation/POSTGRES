@@ -1,5 +1,5 @@
 {
-  "policy_name": "agent-b-memory-policy",
+  "policy_name": "codex-memory-policy",
   "policy_version": "1.0.0",
   "default_scope": "isolated",
   "default_rule": "message",
@@ -20,7 +20,7 @@
       "min_confidence": 0.72,
       "tags": [
         "fact",
-        "agent-b"
+        "codex"
       ],
       "detect_patterns": [
         "(?i)policy",
@@ -34,7 +34,7 @@
       "min_confidence": 0.7,
       "tags": [
         "preference",
-        "agent-b"
+        "codex"
       ],
       "detect_patterns": [
         "(?i)prefers",
