@@ -1,18 +1,19 @@
-# Gateway
+﻿# Gateway
 
-Central gateway model for remote multi-agent usage.
+Single-wrapper gateway model: one full wrapper per agent.
 
-## Components
+## Canonical wrappers
 
-- `central_gateway.py`: HTTP service to run on VPS.
-- `policies/*.json`: event policies and per-agent profiles.
-- `core.ps1`: local direct mode script for PowerShell.
-- `core.sh`: local direct mode script for bash/sh.
-- `agents/*.ps1`: local direct mode wrappers.
-- `.claude/scripts/claude_gateway.ps1` / `.claude/scripts/claude_gateway.sh`: Claude wrappers that call central gateway.
-- `.codex/scripts/codex_gateway.ps1` / `.codex/scripts/codex_gateway.sh`: Codex wrappers that call central gateway.
+- `scripts/gateway/agents/claude.ps1` / `scripts/gateway/agents/claude.sh`
+- `scripts/gateway/agents/codex.ps1` / `scripts/gateway/agents/codex.sh`
+- `scripts/gateway/agents/agent-zero.ps1` / `scripts/gateway/agents/agent-zero.sh`
 
-## Central gateway start
+Each wrapper supports both modes:
+
+- `direct`: policy evaluation + direct API calls to target service.
+- `remote`: calls central gateway `POST /gateway/execute`.
+
+## Central gateway
 
 ```powershell
 python .\scripts\gateway\central_gateway.py --host 0.0.0.0 --port 8787 --target-base-url http://127.0.0.1:8000
@@ -25,39 +26,26 @@ Environment overrides:
 - `GATEWAY_TARGET_BASE_URL`
 - `GATEWAY_AGENT_PROFILES`
 
-## Required auth variables on the gateway host
+## Required auth variables (direct mode)
 
-At least one per agent profile:
+At least one per agent:
 
 - `CLAUDE_GATEWAY_TOKEN` or `CLAUDE_GATEWAY_API_KEY`
 - `CODEX_GATEWAY_TOKEN` or `CODEX_GATEWAY_API_KEY`
 - `AGENT0_GATEWAY_TOKEN` or `AGENT0_GATEWAY_API_KEY`
 
-## Wrapper examples (remote mode)
+## Usage examples
 
-Memory event via Claude wrapper:
-
-```powershell
-.\.claude\scripts\claude_gateway.ps1 -Operation memory_event -EventJson '{"content":"Task completed","confidence":0.91}' -GatewayUrl "http://your-vps:8787"
-```
-
-API proxy via Codex wrapper:
+Direct memory event (Codex):
 
 ```powershell
-.\.codex\scripts\codex_gateway.ps1 -Operation api_proxy -Method POST -Path "/tasks" -PayloadJson '{"summary":"integration task","idempotency_key":"k1"}' -GatewayUrl "http://your-vps:8787"
+.\scripts\gateway\agents\codex.ps1 -Mode direct -Operation memory_event -EventJson '{"event_type":"task_outcome","content":"Migration completed","confidence":0.92,"scope":"isolated"}' -BaseUrl http://127.0.0.1:8000
 ```
 
-## Local direct mode via `core.sh`
+Remote API proxy (Claude):
 
-```bash
-sh ./scripts/gateway/core.sh \
-  --policy-file ./scripts/gateway/policies/Claude.json \
-  --agent-id Claude \
-  --tenant-id Casey \
-  --event-json '{"event_type":"task_outcome","content":"Migration completed","confidence":0.92,"scope":"isolated"}' \
-  --base-url http://127.0.0.1:8000 \
-  --auth-token "$CLAUDE_GATEWAY_TOKEN" \
-  --dry-run
+```powershell
+.\scripts\gateway\agents\claude.ps1 -Mode remote -Operation api_proxy -Method POST -Path "/tasks" -PayloadJson '{"summary":"integration task"}' -GatewayUrl "http://your-vps:8787"
 ```
 
 ## `POST /gateway/execute` payload
@@ -92,9 +80,3 @@ sh ./scripts/gateway/core.sh \
   }
 }
 ```
-
-## Notes
-
-- Every operation emits start/end action logs through `/memory/ingest`.
-- Allowed methods and endpoint prefixes are controlled by `policies/agent_profiles.json`.
-- Event-class persistence rules are controlled by each policy file (`Claude.json`, `Agent-0.json`, `Codex.json`).
