@@ -1,0 +1,21 @@
+# Lifecycle Management (Phase 11)
+
+- Memory maintenance jobs:
+  - decay with reinforcement and pinned/core exemptions
+  - stale detection (expiry, contradictions, old source refs)
+  - compaction of old messages into episodes
+  - retention enforcement with soft/hard delete schedule
+- Backup/restore:
+  - backup snapshots under `backups/`
+  - restore drills through restore endpoint
+- Retention policy:
+  - per-tenant message, sensitive, and soft-delete windows
+- Migration policy:
+  - forward-only SQL migration files in `app/db/migrations`
+  - rollback strategy via restore from backup snapshot
+- Endpoints:
+  - `POST /lifecycle/retention`
+  - `POST /lifecycle/maintenance`
+  - `POST /lifecycle/backup`
+  - `POST /lifecycle/restore`
+  - `GET /lifecycle/backups`

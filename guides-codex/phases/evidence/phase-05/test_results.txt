@@ -1,0 +1,5 @@
+Command: python -m pytest -q
+Result: PASS
+Output:
+..............                                                           [100%]
+14 passed in 0.04s

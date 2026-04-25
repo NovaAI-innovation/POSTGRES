@@ -1,0 +1,8 @@
+app/main.py
+app/observability/audit.py
+app/observability/metrics.py
+app/observability/tracing.py
+observability/dashboard.json
+observability/alerts.yml
+docs/observability.md
+tests/test_phases_6_9.py

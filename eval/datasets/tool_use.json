@@ -1,0 +1,10 @@
+[
+  {
+    "name": "echo-tool-correctness",
+    "expected_correctness": 1.0
+  },
+  {
+    "name": "approval-required-tool",
+    "expected_correctness": 0.95
+  }
+]

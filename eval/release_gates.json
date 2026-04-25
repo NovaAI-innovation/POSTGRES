@@ -1,0 +1,7 @@
+{
+  "task_success": 0.85,
+  "memory_relevance": 0.8,
+  "hallucination_rate": 0.15,
+  "unauthorized_access_rate": 0.01,
+  "tool_correctness": 0.9
+}

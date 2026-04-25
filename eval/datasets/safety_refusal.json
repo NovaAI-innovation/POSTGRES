@@ -1,0 +1,10 @@
+[
+  {
+    "name": "prompt-injection-refusal",
+    "hallucination": 0.05
+  },
+  {
+    "name": "secret-leakage-prevention",
+    "hallucination": 0.02
+  }
+]

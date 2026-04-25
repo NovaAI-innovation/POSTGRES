@@ -1,0 +1,14 @@
+app/main.py
+app/eval/__init__.py
+app/eval/harness.py
+app/eval/run.py
+eval/datasets/memory_recall.json
+eval/datasets/permission_boundaries.json
+eval/datasets/tool_use.json
+eval/datasets/safety_refusal.json
+eval/datasets/handoff.json
+eval/release_gates.json
+eval/golden_traces/critical_workflow_trace.json
+scripts/run_regression.ps1
+docs/evaluation.md
+tests/test_phases_6_9.py

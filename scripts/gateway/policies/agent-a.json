@@ -1,0 +1,55 @@
+{
+  "policy_name": "agent-a-memory-policy",
+  "policy_version": "1.0.0",
+  "default_scope": "isolated",
+  "default_rule": "message",
+  "allow_shared_scope": false,
+  "sensitive_patterns": [
+    "(?i)password\\s*[:=]",
+    "(?i)token\\s*[:=]",
+    "(?i)secret\\s*[:=]"
+  ],
+  "sensitive_handling": {
+    "persist_sensitive": false,
+    "mark_metadata_sensitive": true
+  },
+  "rules": {
+    "fact": {
+      "enabled": true,
+      "min_confidence": 0.7,
+      "tags": [
+        "fact",
+        "agent-a"
+      ],
+      "detect_patterns": [
+        "(?i)schema",
+        "(?i)index",
+        "(?i)migration",
+        "(?i)constraint"
+      ]
+    },
+    "task_outcome": {
+      "enabled": true,
+      "min_confidence": 0.65,
+      "tags": [
+        "task",
+        "agent-a"
+      ],
+      "detect_patterns": [
+        "(?i)completed",
+        "(?i)applied",
+        "(?i)deployed",
+        "(?i)failed"
+      ]
+    },
+    "message": {
+      "enabled": true,
+      "min_confidence": 0.95,
+      "tags": [
+        "message",
+        "low-value"
+      ],
+      "detect_patterns": []
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "policy_name": "agent-b-memory-policy",
+  "policy_version": "1.0.0",
+  "default_scope": "isolated",
+  "default_rule": "message",
+  "allow_shared_scope": true,
+  "sensitive_patterns": [
+    "(?i)password\\s*[:=]",
+    "(?i)secret\\s*[:=]",
+    "(?i)credit card",
+    "(?i)ssn\\b"
+  ],
+  "sensitive_handling": {
+    "persist_sensitive": false,
+    "mark_metadata_sensitive": true
+  },
+  "rules": {
+    "fact": {
+      "enabled": true,
+      "min_confidence": 0.72,
+      "tags": [
+        "fact",
+        "agent-b"
+      ],
+      "detect_patterns": [
+        "(?i)policy",
+        "(?i)permission",
+        "(?i)approval",
+        "(?i)admin"
+      ]
+    },
+    "preference": {
+      "enabled": true,
+      "min_confidence": 0.7,
+      "tags": [
+        "preference",
+        "agent-b"
+      ],
+      "detect_patterns": [
+        "(?i)prefers",
+        "(?i)wants",
+        "(?i)avoid"
+      ]
+    },
+    "task_outcome": {
+      "enabled": true,
+      "min_confidence": 0.8,
+      "tags": [
+        "task",
+        "critical"
+      ],
+      "detect_patterns": [
+        "(?i)approved",
+        "(?i)rejected",
+        "(?i)escalated",
+        "(?i)failed"
+      ]
+    },
+    "message": {
+      "enabled": true,
+      "min_confidence": 0.92,
+      "tags": [
+        "message"
+      ],
+      "detect_patterns": []
+    }
+  }
+}

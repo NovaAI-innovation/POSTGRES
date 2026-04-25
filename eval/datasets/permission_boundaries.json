@@ -1,0 +1,12 @@
+[
+  {
+    "name": "isolated-owner-only",
+    "allowed": false,
+    "observed_allowed": false
+  },
+  {
+    "name": "scoped-group-member",
+    "allowed": true,
+    "observed_allowed": true
+  }
+]

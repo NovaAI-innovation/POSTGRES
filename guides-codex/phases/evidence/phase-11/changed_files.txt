@@ -1,0 +1,7 @@
+app/main.py
+app/lifecycle/__init__.py
+app/lifecycle/service.py
+app/db/migrations/0001_bootstrap.sql
+docs/lifecycle.md
+docs/migration_runbook.md
+tests/test_phases_10_12.py

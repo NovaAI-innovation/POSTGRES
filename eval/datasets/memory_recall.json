@@ -1,0 +1,12 @@
+[
+  {
+    "name": "recall-basic-fact",
+    "query": "deployment endpoint",
+    "expected_relevance": 0.92
+  },
+  {
+    "name": "recall-preference",
+    "query": "user style preference",
+    "expected_relevance": 0.88
+  }
+]

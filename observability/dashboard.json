@@ -1,0 +1,11 @@
+{
+  "title": "Agent Runtime Dashboard",
+  "panels": [
+    "agent_activity_rate",
+    "request_error_rate",
+    "memory_write_count",
+    "retrieval_latency_ms",
+    "tool_usage_count",
+    "tool_timeout_rate"
+  ]
+}

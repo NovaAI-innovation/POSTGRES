@@ -1,0 +1,9 @@
+Command: python -m pytest -q
+Result: PASS
+Output:
+..........................                                               [100%]
+26 passed in 0.11s
+
+Command: python -m app.eval.run
+Result: PASS
+Gate: pass=true

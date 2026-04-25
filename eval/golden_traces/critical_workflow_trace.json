@@ -1,0 +1,11 @@
+{
+  "name": "memory_retrieve_then_tool_call",
+  "spans": [
+    "agent_request",
+    "retrieval",
+    "llm_call",
+    "tool_call",
+    "db"
+  ],
+  "expected_status": "ok"
+}

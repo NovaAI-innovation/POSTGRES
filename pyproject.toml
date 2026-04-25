@@ -1,0 +1,9 @@
+[project]
+name = "agent-memory-service"
+version = "0.1.0"
+description = "Phases 0-2 implementation for production agent memory layers."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

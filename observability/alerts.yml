@@ -1,0 +1,11 @@
+alerts:
+  - name: request_error_rate_spike
+    condition: error_rate > 0.05
+  - name: db_latency_high
+    condition: db_latency_ms_p95 > 250
+  - name: embedding_failures
+    condition: embedding_errors > 0
+  - name: unauthorized_access_attempts
+    condition: unauthorized_access_count > 0
+  - name: tool_timeout_spike
+    condition: tool_timeout_rate > 0.1

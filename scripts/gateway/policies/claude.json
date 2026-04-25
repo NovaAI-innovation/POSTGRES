@@ -1,0 +1,71 @@
+{
+  "policy_name": "claude-memory-policy",
+  "policy_version": "1.0.0",
+  "default_scope": "isolated",
+  "default_rule": "message",
+  "allow_shared_scope": false,
+  "sensitive_patterns": [
+    "(?i)password\\s*[:=]",
+    "(?i)api[_-]?key\\s*[:=]",
+    "(?i)secret\\s*[:=]",
+    "(?i)ssn\\b",
+    "(?i)private key"
+  ],
+  "sensitive_handling": {
+    "persist_sensitive": false,
+    "mark_metadata_sensitive": true
+  },
+  "rules": {
+    "fact": {
+      "enabled": true,
+      "min_confidence": 0.75,
+      "tags": [
+        "fact",
+        "durable"
+      ],
+      "detect_patterns": [
+        "(?i)always",
+        "(?i)never",
+        "(?i)must",
+        "(?i)constraint"
+      ]
+    },
+    "preference": {
+      "enabled": true,
+      "min_confidence": 0.8,
+      "tags": [
+        "preference",
+        "user"
+      ],
+      "detect_patterns": [
+        "(?i)prefers",
+        "(?i)likes",
+        "(?i)dislikes",
+        "(?i)wants"
+      ]
+    },
+    "task_outcome": {
+      "enabled": true,
+      "min_confidence": 0.7,
+      "tags": [
+        "task",
+        "outcome"
+      ],
+      "detect_patterns": [
+        "(?i)completed",
+        "(?i)failed",
+        "(?i)shipped",
+        "(?i)rollback"
+      ]
+    },
+    "message": {
+      "enabled": true,
+      "min_confidence": 0.9,
+      "tags": [
+        "message",
+        "ephemeral"
+      ],
+      "detect_patterns": []
+    }
+  }
+}
